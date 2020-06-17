@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: mysql_db
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ./mysql-init-files:/docker-entrypoint-initdb.d
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: temp_db
+      MYSQL_USER: miuser
+      MYSQL_PASSWORD: mipassword
+    ports:
+      - "9906:3306"
+  web:
+    image: myphp:7.2.2-apache-rewrite
+    container_name: php_web
+    depends_on:
+      - db
+    volumes:
+      - ./src/:/var/www/html/
+    ports:
+      - "8080:80"
+    stdin_open: true
+    tty: true
